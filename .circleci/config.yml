@@ -32,9 +32,9 @@ jobs:
       - checkout
       - docker/check
       - docker/build:
-          image: thinkdaniel/education-space
+          image: thinkdaniel/devops-app
       - docker/push:
-          image: thinkdaniel/education-space
+          image: thinkdaniel/devops-app
   deploy:
     docker:
       - image: cimg/node:16.10
