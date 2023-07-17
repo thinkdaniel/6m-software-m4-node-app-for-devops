@@ -1,19 +1,41 @@
+# Check CircleCI config: https://circleci.com/docs/2.0/configuration-reference/
+# Use the latest 2.1 version of CircleCI pipeline process engine. See: https://circleci.com/docs/2.0/configuration-reference/#version
 version: 2.1
+# Orbs are shareable packages of configuration elements, including jobs, commands, and executors. See: https://circleci.com/docs/2.0/using-orbs/
 orbs:
+  # https://circleci.com/developer/orbs/orb/circleci/node
   node: circleci/node@5.0.1
   docker: circleci/docker@2.1.4
   heroku: circleci/heroku@2.0.0
+# Jobs are collections of steps. See: https://circleci.com/docs/2.0/configuration-reference/#jobs
+# To define jobs to install dependencies, build, and test the application
 jobs:
+  # build is the name of the job
+  # A job to install dependencies
   build:
+    # The docker executor is used for building and testing applications
+    # Using Docker increases performance by building only what is required for your application
     docker:
+      # The image used for the primary container
+      # https://circleci.com/developer/images/image/cimg/node
       - image: cimg/node:16.10
+    # The steps that comprise the job
     steps:
+      # The checkout step clones your project source code to the working directory, or folder, of the job
       - checkout
+      # The node/install-packages step installs project dependencies with the npm package manager
+      # orb/command-name
+      # tells CircleCI to use the install-packages command from the node orb to install the dependencies for the project. The install-packages command takes a pkg-manager parameter, which specifies the package manager to use. In this case, the pkg-manager parameter is set to npm, so the install-packages command will use npm to install the dependencies.
       - node/install-packages:
+          # Orb Command Parameters
+          # The package manager to use
           pkg-manager: npm
+      # The run step executes a command
       - run: |
           echo Installing dependencies...”
-          npm install
+      # This should not be necessary because the above would run npm ci
+      # npm install
+  # A job to test the application
   test:
     docker:
       - image: cimg/node:16.10
@@ -25,40 +47,74 @@ jobs:
           echo “Running tests...”
           npm run test
 
+  # A job to build and push the application to Docker Hub
   build-and-push:
+    # The docker executor is used for building and testing applications
+    # Executor key is used to specify the environment in which a job runs
     executor: docker/docker
     steps:
       - setup_remote_docker
       - checkout
       - docker/check
+      # Build the image
       - docker/build:
           image: thinkdaniel/devops-app
+          tag: <<pipeline.git.tag>>
+      # Push the image to Docker Hub
       - docker/push:
           image: thinkdaniel/devops-app
+          tag: <<pipeline.git.tag>>
   deploy:
+    # Specify the environment in which a job runs
     docker:
       - image: cimg/node:16.10
+    # setup_remote_docker sets up the Docker executor environment
+    # heroku/install uses Heroku orb to install the Heroku CLI
+
     steps:
       - setup_remote_docker
       - heroku/install
       - checkout
+      # run defines a custom step that runs a command(s)
       - run:
+          # The name of the step
           name: Heroku Container Push
+          # heroku container:login logs in to the Heroku container registry
+          # heroku container:push pushes the image to the Heroku container registry
+          # heroku container:release releases the container to Heroku app, making it live
           command: |
             heroku container:login
             heroku container:push web -a thinkdaniel-su-devops
             heroku container:release web -a thinkdaniel-su-devops
 
+# Workflows are collections of jobs and their run order. See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
+  # A workflow to build and test the application
   simple_workflow:
     jobs:
-      - build
+      - build:
+          filters:
+            branches:
+              only: main
       - test:
           requires:
             - build
+          filters:
+            branches:
+              only: main
       - build-and-push:
           requires:
             - test
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
       - deploy:
           requires:
             - build-and-push
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
