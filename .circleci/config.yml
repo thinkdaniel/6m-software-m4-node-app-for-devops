@@ -95,12 +95,16 @@ workflows:
     jobs:
       - build:
           filters:
+            tags:
+              only: /^v.*/
             branches:
               only: main
       - test:
           requires:
             - build
           filters:
+            tags:
+              only: /^v.*/
             branches:
               only: main
       - build-and-push:
