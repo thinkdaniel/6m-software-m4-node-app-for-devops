@@ -32,7 +32,7 @@ jobs:
           pkg-manager: npm
       # The run step executes a command
       - run: |
-          echo Installing dependencies...”
+          echo "Installing dependencies..."
       # This should not be necessary because the above would run npm ci
       # npm install
   # A job to test the application
@@ -44,7 +44,7 @@ jobs:
       - node/install-packages:
           pkg-manager: npm
       - run: |
-          echo “Running tests...”
+          echo "Running tests..."
           npm run test
 
   # A job to build and push the application to Docker Hub
