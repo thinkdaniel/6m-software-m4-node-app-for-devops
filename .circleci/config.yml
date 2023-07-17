@@ -33,6 +33,7 @@ jobs:
       # The run step executes a command
       - run: |
           echo "Installing dependencies..."
+          echo <<pipeline.git.tag>>
       # This should not be necessary because the above would run npm ci
       # npm install
   # A job to test the application
@@ -105,6 +106,16 @@ workflows:
       - build-and-push:
           requires:
             - test
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
       - deploy:
           requires:
             - build-and-push
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
