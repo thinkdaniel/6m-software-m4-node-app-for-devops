@@ -121,7 +121,7 @@ workflows:
               only: /^v.*/
             branches:
               only: main
-      - snyk/scan:
+      - scan:
           requires:
             - build
           filters:
