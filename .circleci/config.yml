@@ -8,6 +8,7 @@ orbs:
   node: circleci/node@5.0.1
   docker: circleci/docker@2.1.4
   heroku: circleci/heroku@2.0.0
+  snyk: snyk/snyk@1.5.0
 # Jobs are collections of steps. See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 # To define jobs to install dependencies, build, and test the application
 jobs:
@@ -47,6 +48,19 @@ jobs:
       - run: |
           echo "Running tests..."
           npm run test
+  # A job to scan the application for vulnerabilities
+  scan:
+    docker:
+      - image: cimg/node:16.10
+    environment:
+      IMAGE_NAME: thinkdaniel/devops-app
+    steps:
+      - checkout
+      - setup_remote_docker
+      - docker/check
+      - run: docker build -t $IMAGE_NAME .
+      - snyk/scan:
+          docker-image-name: $IMAGE_NAME
 
   # A job to build and push the application to Docker Hub
   build-and-push:
@@ -100,6 +114,14 @@ workflows:
             branches:
               only: main
       - test:
+          requires:
+            - build
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              only: main
+      - snyk/scan:
           requires:
             - build
           filters:
