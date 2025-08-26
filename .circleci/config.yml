@@ -6,7 +6,12 @@ orbs:
 # Each job has 2 parts - 1. Executor, 2. Steps
 jobs:
   build:
+    # executor:
+    #   name: docker
+    #   docker:
+    #     - image: cimg/node:16.10
     # Means spin up a container using node:16.10 and run the steps
+    # Shorthand for the executor
     docker:
       - image: cimg/node:16.10
     steps:
@@ -19,6 +24,16 @@ jobs:
       # - run: |
       #     echo "Installing dependencies"
       #     npm install
+  lint:
+    docker:
+      - image: cimg/node:16.10
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: npm
+      - run: |
+          echo "Running lint..."
+          npm run lint
   test:
     docker:
       - image: cimg/node:16.10
@@ -34,6 +49,9 @@ workflows:
   simple_workflow:
     jobs:
       - build # Run build job first
+      - lint: # Run lint job after build
+          requires:
+            - build
       - test: # Run test job after build
           requires:
             - build # test depends on build

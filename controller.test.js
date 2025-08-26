@@ -1,3 +1,4 @@
+/* eslint-disable */
 const targetFn = require("./controller");
 
 describe("the print function", ()=>{
