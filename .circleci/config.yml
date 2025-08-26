@@ -4,30 +4,31 @@ orbs:
   node: circleci/node@5.0.1
   docker: circleci/docker@2.1.4
 # Each job has 2 parts - 1. Executor, 2. Steps
-build:
-  # Means spin up a container using node:16.10 and run the steps
-  docker:
-    - image: cimg/node:16.10
-  steps:
-    - checkout
-    # Using node/install-packages is better than npm install
-    # because it gives you CircleCI optimization (caching, lockfile, concise)
-    - node/install-packages:
-      pkg-manager: npm
-    # Without orbs, we have to run everything manually using run
-    # - run: |
-    #     echo "Installing dependencies"
-    #     npm install
-test:
-  docker:
-    - image: cimg/node:16.10
-  steps:
-    - checkout
-    - node/install-packages:
-      pkg-manager: npm
-    - run: |
-        echo "Running tests..."
-        npm run test
+jobs:
+  build:
+    # Means spin up a container using node:16.10 and run the steps
+    docker:
+      - image: cimg/node:16.10
+    steps:
+      - checkout
+      # Using node/install-packages is better than npm install
+      # because it gives you CircleCI optimization (caching, lockfile, concise)
+      - node/install-packages:
+          pkg-manager: npm
+      # Without orbs, we have to run everything manually using run
+      # - run: |
+      #     echo "Installing dependencies"
+      #     npm install
+  test:
+    docker:
+      - image: cimg/node:16.10
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: npm
+      - run: |
+          echo "Running tests..."
+          npm run test
 # Define the workflow for job execution order
 workflows:
   simple_workflow:
