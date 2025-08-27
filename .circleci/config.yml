@@ -56,6 +56,22 @@ jobs:
       - run: |
           echo "Running tests..."
           npm run test
+  publish:
+    executor: docker/docker
+    steps:
+      - setup_remote_docker
+      - checkout
+      # Ensure DOCKER_LOGIN and DOCKER_PASSWORD set in CircleCI Project Settings
+      # CircleCI Docker Orb will automatically use these credentials
+      # Verify Docker is working (optional step)
+      - docker/check
+      - docker/build:
+          image: thinkdaniel/test-repository
+          tag: latest
+      - docker/push:
+          image: thinkdaniel/test-repository
+          tag: latest
+
 # Define the workflow for job execution order
 workflows:
   simple_workflow:
@@ -67,3 +83,7 @@ workflows:
       - test: # Run test job after build
           requires:
             - build # test depends on build
+      - publish: # Run publish job after test and lint
+          requires:
+            - test
+            - lint
