@@ -1,6 +1,6 @@
 # Application for Software Engineering DevOps (Module 4)
 
-[![CircleCI](https://dl.circleci.com/status-badge/img/gh/thinkdanie/6m-software-m4-node-app-for-devops/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/thinkdanie/6m-software-m4-node-app-for-devops/tree/main)
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/thinkdaniel/6m-software-m4-node-app-for-devops/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/thinkdaniel/6m-software-m4-node-app-for-devops/tree/main)
 
 ## Brief Introduction
 
