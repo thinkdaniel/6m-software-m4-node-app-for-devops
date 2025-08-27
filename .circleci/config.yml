@@ -3,6 +3,7 @@ version: 2.1
 orbs:
   node: circleci/node@5.0.1
   docker: circleci/docker@2.1.4
+  heroku: circleci/heroku@2.0.0
 
 # commands are reusable sets of steps
 commands:
@@ -75,6 +76,20 @@ jobs:
       - docker/push:
           image: thinkdaniel/test-repository
           tag: << pipeline.git.revision >>,latest
+  deploy:
+    docker:
+      - image: cimg/node:16.10
+    steps:
+      - setup_remote_docker
+      - heroku/install
+      - checkout
+      - run:
+          name: Heroku Container Push
+          command: |
+            echo "Pushing Docker container to Heroku..."
+            heroku container:login
+            heroku container:push web --app thinkdaniel-su-devops
+            heroku container:release web --app thinkdaniel-su-devops
 
 # Define the workflow for job execution order
 workflows:
@@ -91,3 +106,6 @@ workflows:
           requires:
             - test
             - lint
+      - deploy:
+          requires:
+            - publish
