@@ -64,7 +64,7 @@ jobs:
       # Ensure DOCKER_LOGIN and DOCKER_PASSWORD set in CircleCI Project Settings
       # CircleCI Docker Orb will automatically use these credentials
       # Verify Docker is working (optional step)
-      # - docker/check
+      - docker/check
       - docker/build:
           image: thinkdaniel/test-repository
           tag: latest
