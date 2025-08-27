@@ -88,6 +88,9 @@ jobs:
           command: |
             echo "Pushing Docker container to Heroku..."
             heroku container:login
+            # Use the Heroku container stack
+            # Special container stack is required to deploy Docker images
+            heroku stack:set container --app thinkdaniel-su-devops
             heroku container:push web --app thinkdaniel-su-devops
             heroku container:release web --app thinkdaniel-su-devops
 
