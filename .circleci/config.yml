@@ -63,14 +63,18 @@ jobs:
       - checkout
       # Ensure DOCKER_LOGIN and DOCKER_PASSWORD set in CircleCI Project Settings
       # CircleCI Docker Orb will automatically use these credentials
-      # Verify Docker is working (optional step)
+      # docker/check does 3 things:
+      # 1. Verifies Docker is working
+      # 2. Authenticates with Docker Hub using your credentials
+      # 3. Sets up the Docker client for subsequent operations
+      # without this we have to manually run docker login
       - docker/check
       - docker/build:
           image: thinkdaniel/test-repository
-          tag: latest
+          tag: << pipeline.git.revision >>,latest
       - docker/push:
           image: thinkdaniel/test-repository
-          tag: latest
+          tag: << pipeline.git.revision >>,latest
 
 # Define the workflow for job execution order
 workflows:
