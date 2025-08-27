@@ -3,9 +3,20 @@ version: 2.1
 orbs:
   node: circleci/node@5.0.1
   docker: circleci/docker@2.1.4
+
+# commands are reusable sets of steps
+commands:
+  # Define install_deps command for installing dependencies
+  install_deps:
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: npm
+
 # Each job has 2 parts - 1. Executor, 2. Steps
 jobs:
   build:
+    # Long form of the executor
     # executor:
     #   name: docker
     #   docker:
@@ -15,11 +26,11 @@ jobs:
     docker:
       - image: cimg/node:16.10
     steps:
-      - checkout
+      - install_deps
       # Using node/install-packages is better than npm install
       # because it gives you CircleCI optimization (caching, lockfile, concise)
-      - node/install-packages:
-          pkg-manager: npm
+      # - node/install-packages:
+      #     pkg-manager: npm
       # Without orbs, we have to run everything manually using run
       # - run: |
       #     echo "Installing dependencies"
@@ -38,9 +49,10 @@ jobs:
     docker:
       - image: cimg/node:16.10
     steps:
-      - checkout
-      - node/install-packages:
-          pkg-manager: npm
+      - install_deps
+      # - checkout
+      # - node/install-packages:
+      #     pkg-manager: npm
       - run: |
           echo "Running tests..."
           npm run test
