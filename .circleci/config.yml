@@ -3,6 +3,7 @@ version: 2.1
 orbs:
   node: circleci/node@5.0.1
   docker: circleci/docker@2.1.4
+  heroku: circleci/heroku@2.0.0
 
 # commands - resuable sets of steps
 commands:
@@ -49,9 +50,13 @@ jobs:
       - run: |
           echo "Running tests..."
           npm run test
+  # this job needs to build and push Docker images 
   publish:
+    # CircleCI provides a special executor that allows Docker-in-Docker
+    # so that you run docker build, push, etc
     executor: docker/docker
     steps:
+      # enables remote Docker engine
       - setup_remote_docker
       - checkout
       # docker/check does 3 things
@@ -69,6 +74,21 @@ jobs:
       - docker/push:
           image: thinkdaniel/test-repository
           tag: << pipeline.git.revision >>,latest
+  deploy:
+    docker:
+      - image: cimg/node:16.10
+    steps:
+      - setup_remote_docker
+      - heroku/install
+      - checkout
+      - run:
+          name: Heroku Container Push
+          command: |
+            heroku container:login
+            heroku stack:set container -a thinkdaniel-su-devops
+            heroku container:push web -a thinkdaniel-su-devops
+            heroku container:release web -a thinkdaniel-su-devops
+
 
 # Define the workflow for job execution order
 workflows:
@@ -85,3 +105,6 @@ workflows:
           requires:
             - test
             - lint
+      - deploy:
+          requires:
+            - publish
