@@ -96,6 +96,8 @@ jobs:
             docker pull thinkdaniel/test-repository:<< pipeline.git.revision >>
             # Tag it for Heroku
             docker tag thinkdaniel/test-repository:<< pipeline.git.revision >> registry.heroku.com/thinkdaniel-su-devops/web
+            # Push to Heroku Container Registry
+            docker push registry.heroku.com/thinkdaniel-su-devops/web
             # Release the pushed Docker image
             heroku container:release web --app thinkdaniel-su-devops
   # deploy:
