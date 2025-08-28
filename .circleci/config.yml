@@ -93,7 +93,7 @@ jobs:
             # Special container stack is required to deploy Docker images
             heroku stack:set container --app thinkdaniel-su-devops
             # Pull image that was built in the publish job
-            docker pull thinkdaniel/test-repository:latest
+            docker pull thinkdaniel/test-repository:<< pipeline.git.revision >>
             # Tag it for Heroku
             docker tag thinkdaniel/test-repository:<< pipeline.git.revision >> registry.heroku.com/thinkdaniel-su-devops/web
             # Release the pushed Docker image
