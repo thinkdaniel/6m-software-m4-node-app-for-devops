@@ -15,6 +15,6 @@ describe("the print function", ()=>{
         }
 
         targetFn(mockReq, mockRes);
-        expect(mockRes.send).toHaveBeenCalledWith("Hello world!!"); // If you change this value, the test will fail.
+        expect(mockRes.send).toHaveBeenCalledWith("Hello world! It's a great day!"); // If you change this value, the test will fail.
     })
 })
