@@ -61,10 +61,14 @@ jobs:
       # Ensure that DOCKER_LOGIN and DOCKER_PASSWORD in CircleCI Project Settings
       # Without this, we have manually run `docker login`
       - docker/check
+      # Use Docker orb to build and push image
       - docker/build:
           image: thinkdaniel/test-repository
+          # tag with current git revision (commit hash) and latest tag
+          tag: << pipeline.git.revision >>, latest
       - docker/push:
           image: thinkdaniel/test-repository
+          tag: << pipeline.git.revision >>, latest
 
 # Define the workflow for job execution order
 workflows:
