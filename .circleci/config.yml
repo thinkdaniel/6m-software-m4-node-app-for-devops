@@ -83,16 +83,40 @@ jobs:
       - setup_remote_docker
       - heroku/install
       - checkout
+      - docker/check
       - run:
-          name: Heroku Container Push
+          name: Deploy to Heroku
           command: |
-            echo "Pushing Docker container to Heroku..."
+            echo "Deploying pre-built image to Heroku..."
             heroku container:login
             # Use the Heroku container stack
             # Special container stack is required to deploy Docker images
             heroku stack:set container --app thinkdaniel-su-devops
-            heroku container:push web --app thinkdaniel-su-devops
+            # Pull image that was built in the publish job
+            docker pull thinkdaniel/test-repository:latest
+            # Tag it for Heroku
+            docker tag thinkdaniel/test-repository:<< pipeline.git.revision >> registry.heroku.com/thinkdaniel-su-devops/web
+            # Release the pushed Docker image
             heroku container:release web --app thinkdaniel-su-devops
+  # deploy:
+  #   docker:
+  #     - image: cimg/node:16.10
+  #   steps:
+  #     - setup_remote_docker
+  #     - heroku/install
+  #     - checkout
+  #     - run:
+  #         name: Heroku Container Push
+  #         command: |
+  #           echo "Pushing Docker container to Heroku..."
+  #           heroku container:login
+  #           # Use the Heroku container stack
+  #           # Special container stack is required to deploy Docker images
+  #           heroku stack:set container --app thinkdaniel-su-devops
+  #           # Build Docker image locally and push to Heroku container registry
+  #           heroku container:push web --app thinkdaniel-su-devops
+  #           # Release the pushed Docker image
+  #           heroku container:release web --app thinkdaniel-su-devops
 
 # Define the workflow for job execution order
 workflows:
