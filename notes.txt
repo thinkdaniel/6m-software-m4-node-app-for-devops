@@ -1,0 +1,1 @@
+Build -> Test -> Publish to Docker Hub -> Pull from Docker Hub -> Deploy to Heroku
