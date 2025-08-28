@@ -1,1 +1,6 @@
 Build -> Test -> Publish to Docker Hub -> Pull from Docker Hub -> Deploy to Heroku
+
+CI/CD pattern:
+Build and Test
+Publish to registry (Docker Hub)
+Deploy - pull the same image from registry to deploy to Heroku
