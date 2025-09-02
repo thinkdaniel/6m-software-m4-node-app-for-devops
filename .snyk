@@ -1,9 +1,15 @@
 ignore:
   SNYK-JS-BRACEEXPANSION-9789073:
-    - '*':
-        reason: "No direct upgrade available, low severity"
+    - 'npm@* > *':
+        reason: "Base image npm vulnerability, no direct control"
+        expires: '2024-12-31T23:59:59.999Z'
+    - '* > npm@* > *':
+        reason: "Base image npm vulnerability, no direct control" 
         expires: '2024-12-31T23:59:59.999Z'
   SNYK-JS-CROSSSPAWN-8303230:
-    - '*':
-        reason: "No direct upgrade available via npm dependencies"  
+    - 'npm@* > *':
+        reason: "Base image npm vulnerability, no direct control"
+        expires: '2024-12-31T23:59:59.999Z'
+    - '* > npm@* > *':
+        reason: "Base image npm vulnerability, no direct control"
         expires: '2024-12-31T23:59:59.999Z'
