@@ -1,8 +1,8 @@
 # This file tells CircleCI what to do
 version: 2.1
 orbs:
-  node: circleci/node@5.0.1
-  docker: circleci/docker@2.1.4
+  node: circleci/node@7.1.1
+  docker: circleci/docker@3.0.0
   heroku: circleci/heroku@2.0.0
 
 # commands - resuable sets of steps
@@ -133,6 +133,13 @@ workflows:
           requires:
             - test
             - lint
+          filters:
+            branches:
+              only: main 
       - deploy:
           requires:
             - publish
+          # This will \
+          filters:
+            branches:
+              only: main 
