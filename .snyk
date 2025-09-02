@@ -1,0 +1,9 @@
+ignore:
+  SNYK-JS-BRACEEXPANSION-9789073:
+    - '*':
+        reason: "No direct upgrade available, low severity"
+        expires: '2024-12-31T23:59:59.999Z'
+  SNYK-JS-CROSSSPAWN-8303230:
+    - '*':
+        reason: "No direct upgrade available via npm dependencies"  
+        expires: '2024-12-31T23:59:59.999Z'
