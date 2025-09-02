@@ -1,8 +1,6 @@
 # This file tells CircleCI what to do
 version: 2.1
-# Set global environment variables
-environment:
-  IMAGE_NAME: thinkdaniel/test-repository
+
 orbs:
   node: circleci/node@7.1.1
   docker: circleci/docker@3.0.0
@@ -55,6 +53,8 @@ jobs:
       # but it does not matter since we are using ths snyk orb
       # - image: snyk/snyk-cli:docker
       - image: cimg/node:16.10
+    environment:
+      IMAGE_NAME: thinkdaniel/test-repository
     steps:
       - checkout
       - setup_remote_docker
