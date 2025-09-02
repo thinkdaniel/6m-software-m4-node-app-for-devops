@@ -1,9 +1,13 @@
 # This file tells CircleCI what to do
 version: 2.1
+# Set global environment variables
+environment:
+  IMAGE_NAME: thinkdaniel/test-repository
 orbs:
   node: circleci/node@7.1.1
   docker: circleci/docker@3.0.0
   heroku: circleci/heroku@2.0.0
+  snyk: snyk/snyk@2.3.0
 
 # commands - resuable sets of steps
 commands:
@@ -34,6 +38,7 @@ jobs:
       # - run: |
       #     echo "Installing dependencies"
       #     npm install
+
   lint:
     docker:
       - image: cimg/node:20.12
@@ -42,6 +47,21 @@ jobs:
       - run: |
           echo "Running lint..."
           npm run lint
+
+  # Snyk Container Scan
+  snyk_container:
+    docker:
+      # snyk image provides snyk CLI pre-installed
+      # but it does not matter since we are using ths snyk orb
+      # - image: snyk/snyk-cli:docker
+      - image: cimg/node:16.10
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: docker build -t $IMAGE_NAME .
+      - snyk/scan:
+          docker-image-name: $IMAGE_NAME
+
   test:
     docker:
       - image: cimg/node:16.10
@@ -50,6 +70,7 @@ jobs:
       - run: |
           echo "Running tests..."
           npm run test
+
   # this job needs to build and push Docker images 
   publish:
     # CircleCI provides a special executor that allows Docker-in-Docker
@@ -74,6 +95,7 @@ jobs:
       - docker/push:
           image: thinkdaniel/test-repository
           tag: << pipeline.git.revision >>,latest
+
   deploy:
     docker:
       - image: cimg/node:16.10
@@ -129,16 +151,24 @@ workflows:
       - test: # Run test job after build
           requires:
             - build # test depends on build
+      - snyk_container:
+          requires:
+            - build
+          filters:
+            branches:
+              only: main
       - publish:
           requires:
             - test
             - lint
+            - snyk_container
           filters:
             branches:
               only: main 
       - deploy:
           requires:
             - publish
+            - snyk_container
           # This will \
           filters:
             branches:
