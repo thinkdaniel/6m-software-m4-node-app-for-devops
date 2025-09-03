@@ -6,8 +6,6 @@ orbs:
   docker: circleci/docker@3.0.0
   heroku: circleci/heroku@2.0.0
   snyk: snyk/snyk@2.3.0
-  gitleaks: upenn-libraries/gitleaks@1.0.0
-
 # commands - resuable sets of steps
 commands:
   install_deps:
@@ -23,7 +21,9 @@ jobs:
       - image: zricethezav/gitleaks:latest
     steps:
       - checkout
-      - gitleaks/check_local
+      - run:
+          name: Run gitleaks scan (local files only)
+          command: gitleaks detect --source . --no-git
   build:
     # executor:
     #   name: docker
@@ -196,4 +196,4 @@ workflows:
             - snyk_sast
           filters:
             branches:
-              only: main 
+              only: main
