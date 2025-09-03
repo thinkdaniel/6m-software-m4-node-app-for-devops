@@ -20,7 +20,7 @@ commands:
 jobs:
   secrets_scan_local:
     docker:
-      - image: cimg/base:stable
+      - image: zricethezav/gitleaks:latest
     steps:
       - checkout
       - gitleaks/check_local
