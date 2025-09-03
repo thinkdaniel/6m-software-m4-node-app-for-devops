@@ -6,6 +6,7 @@ orbs:
   docker: circleci/docker@3.0.0
   heroku: circleci/heroku@2.0.0
   snyk: snyk/snyk@2.3.0
+  gitleaks: upenn-libraries/gitleaks@1.0.0
 
 # commands - resuable sets of steps
 commands:
@@ -17,11 +18,17 @@ commands:
 
 # Each job has 2 parts - 1. Executor, 2. Steps
 jobs:
+  secrets_scan_local:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - gitleaks/check_local
   build:
     # executor:
     #   name: docker
     #   docker:
-    #     - image: cimg/node:16.10
+    #     - image: cimg/node:16.C10
     # Means spin up a container using node:16.10 and run the steps
     # Shorthand for the executor
     docker:
@@ -154,6 +161,7 @@ jobs:
 workflows:
   simple_workflow:
     jobs:
+      - secrets_scan_local
       - build # Run build job first
       # - lint: # Run lint job after build
       #     requires:

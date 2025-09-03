@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "security": "snyk test && snyk code test"
   },
   "repository": {
     "type": "git",
