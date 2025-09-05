@@ -1,3 +1,4 @@
+
 // This is the only function that will be called by the endpoint.
 function print(req, res) {
   // const unused = 42;
@@ -22,5 +23,6 @@ function createUser(req, res) {
       .send({ data: { id: 1, name: req.body.name, email: req.body.email } });
   }
 }
+
 
 module.exports = { print, getHome, createUser };
