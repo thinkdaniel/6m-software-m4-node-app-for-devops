@@ -23,6 +23,8 @@ jobs:
       - checkout
       - run:
           name: Run gitleaks scan (local files only)
+          # --source . : scan current directory and all subdirectories
+          # --no-git : do not scan git history
           command: gitleaks detect --source . --no-git
   build:
     # executor:
