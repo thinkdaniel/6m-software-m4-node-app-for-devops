@@ -4,25 +4,25 @@ function login(req, res) {
   const { username, password } = req.body;
 
   if (!username || !password) {
-    res.status(400).send({ error: "Username and password are required." });
+    return res.status(400).send({ error: "Username and password are required." });
   }
 
   if (username !== "daniel" || password !== "password") {
-    res.status(401).send({ error: "Invalid username or password." });
+    return res.status(401).send({ error: "Invalid username or password." });
   }
 
   // Generate JWT
-  const token = jwt.sign({ username }, "SECRET_AT_LEAST_32_CHARS_LONG", {
+  const token = jwt.sign({ username }, "NVNh119k8oEJXjr2raB9TXOciCprjFzZNDWgBmHwYuuDb/YpcPzw5zhvtye+jLwv", {
     expiresIn: "1h",
   });
 
   // Strict: browser refuses to attach the JWT cookie because request originated from another site
   // res.cookie("JWT", token, { httpOnly: true, sameSite: "Strict" });
 
-  // Lax: browser sends the JWT cookie on same-site requests and cross-site top-level navigations
+  // Lax: browser sends the JWT cookie on same-site requests and cross-site top-level navigations (via link click)
   // This makes CSRF attacks possible
   res.cookie("JWT", token, { httpOnly: true, sameSite: "Lax" });
-  
+
   res.send({ token });
 }
 
@@ -33,21 +33,26 @@ function logout(req, res) {
 
 function transfer(req, res) {
   const { to, amount } = req.query;
+
   // Check if cookies are present
   const token = req.cookies.JWT;
   if (!token) {
-    console.log("No token found.");
-    return res.status(401).send({ error: "You are not logged in." });
+    console.log("No token found. You are not logged in.");
+    return res
+      .status(401)
+      .send({ error: "No token found. You are not logged in." });
   }
 
   // Verify JWT in cookie
   jwt.verify(token, "SECRET_AT_LEAST_32_CHARS_LONG", (err, decoded) => {
     if (err) {
-      console.log("Invalid token.");
-      return res.status(401).send({ error: "Unauthorized" });
+      console.log("Invalid token. You are not authorized.");
+      return res
+        .status(401)
+        .send({ error: "Invalid token. You are not authorized." });
     }
 
-    console.log("✅Token verified:", decoded);
+    console.log("✅ Token verified:", decoded);
 
     console.log(`✅ Transfer of $${amount} to ${to} successful.`);
     // If verification is successful, proceed with the transfer
